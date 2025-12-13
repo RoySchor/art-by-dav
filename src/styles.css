@@ -4,6 +4,9 @@
   --text: #111111;
   --accent: #111111;
   --radius: 24px;
+
+  --sidebar-w: 280px;
+  --gap: 24px;
 }
 
 *,
@@ -71,12 +74,12 @@ body {
 .app-shell {
   min-height: 100%;
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
-  padding: 24px;
+  grid-template-columns: 1fr; /* keeps space for the fixed sidebar */
+  gap: var(--gap);
+  padding: var(--gap);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1300px) {
   .app-shell {
     grid-template-columns: 1fr;
     padding-bottom: 96px; /* space for bottom nav */
@@ -85,35 +88,58 @@ body {
 
 /* sidebar “boxed” look */
 .sidebar {
-  position: sticky;
-  top: 24px;
-  height: calc(100svh - 48px);
-  overflow: auto;
+  position: fixed;
+  left: var(--gap);
+  top: 50%;
+  transform: translateY(-50%);
+  max-height: calc(100svh - 2 * var(--gap));
+  overflow-y: auto;
+  width: var(--sidebar-w);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
+  padding-right: 4px;
+  z-index: 10;
 }
 
-.sidebar-card,
-.bottom-chip {
-  background: var(--card);
-  border: 2px solid #111;
+@media (max-width: 1300px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+.sidebar-card {
+  border: none; /* no outline */
+  box-shadow: none; /* no shadow */
   border-radius: var(--radius);
-  box-shadow: 0 2px 0 #111;
+  padding: 20px;
+  text-decoration: none;
+  color: #fff; /* default white text; component may override to black if bg is white */
+  display: block;
+}
+
+.sidebar-num {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 22px; /* increased spacing */
 }
 
 /* main “Raw Materials” style card */
 .logo-card {
-  background: var(--card);
+  background: transparent; /* no background */
   border-radius: calc(var(--radius) + 8px);
-  border: 2px solid #111;
-  box-shadow: 0 6px 0 #111;
-  padding: clamp(24px, 8vw, 64px);
+  border: 1.5px solid #000000; /* thin outline */
+  box-shadow: none; /* no heavy shadow */
+  padding: clamp(24px, 6vw, 48px);
+  width: min(92vw, 1100px);
+  height: min(78vh, 780px); /* takes most of the screen */
+  display: grid;
+  place-items: center;
 }
 
 .logo-card h1 {
-  font-size: clamp(40px, 10vw, 82px);
-  line-height: 1;
+  font-size: clamp(56px, 12vw, 140px); /* really big */
+  line-height: 0.95;
   margin: 0;
 }
 
@@ -127,7 +153,7 @@ body {
   display: none;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1300px) {
   .bottom-nav {
     display: block;
   }
@@ -148,9 +174,17 @@ body {
   font-weight: 600;
 }
 
-/* the content area centers the logo card */
 .content-center {
   display: grid;
   place-items: center;
-  min-height: calc(100svh - 48px);
+  min-height: calc(100svh - 2 * var(--gap));
+  padding-left: calc(var(--sidebar-w) + var(--gap) + 200px);
+  padding-right: calc(var(--sidebar-w) + var(--gap));
+}
+
+@media (max-width: 1300px) {
+  .content-center {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }
