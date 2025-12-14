@@ -5,7 +5,7 @@
   box-shadow: none;
   padding: clamp(24px, 6vw, 48px);
   width: min(140%, 1100px);
-  height: clamp(420px, 78vh, 780px); /* small floor to avoid odd clipping */
+  height: clamp(420px, 78vh, 780px);
   display: grid;
   place-items: center;
 }

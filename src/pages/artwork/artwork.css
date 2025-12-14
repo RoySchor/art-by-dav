@@ -1,0 +1,31 @@
+/* override sidebar width for this page */
+.artwork-page {
+  --sidebar-w: 200px;
+}
+
+.artwork-main {
+  /* center area with padding to avoid fixed sidebar */
+  padding-left: calc(var(--sidebar-w) + var(--gap));
+  padding-right: calc(var(--sidebar-w) + var(--gap));
+  overflow-x: hidden;
+}
+
+.art-meta {
+  text-align: center;
+}
+.art-title {
+  font-weight: 800;
+  font-size: clamp(18px, 3vw, 26px);
+}
+.art-desc {
+  max-width: 60ch;
+  margin: 6px auto 0;
+  opacity: 0.85;
+}
+
+@media (max-width: 1300px) {
+  .artwork-main {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import "./sidebar.css";
 
 function hslToHex(h: number, s: number, l: number) {
@@ -28,9 +29,9 @@ function getLuma(hex: string) {
 }
 
 const labels = [
-  { num: "00", title: "Home", href: "#" },
-  { num: "01", title: "Artwork", href: "#" },
-  { num: "02", title: "Contact", href: "#" },
+  { num: "00", title: "Home", href: "/" },
+  { num: "01", title: "Artwork", href: "/artwork" },
+  { num: "02", title: "Contact", href: "/contact" },
 ];
 
 const Sidebar: React.FC = () => {
@@ -40,24 +41,28 @@ const Sidebar: React.FC = () => {
       return hslToHex(h, 80, 50);
     });
   }, []);
+  const { pathname } = useLocation();
 
   return (
     <aside className="sidebar" aria-label="Primary">
-      {labels.map((item, i) => {
-        const bg = colors[i % colors.length];
-        const textColor = getLuma(bg) > 0.6 ? "#000" : "#fff";
-        return (
-          <a
-            key={item.title}
-            href={item.href}
-            className="sidebar-card"
-            style={{ background: bg, color: textColor }}
-          >
-            <div className="sidebar-num">{item.num}</div>
-            <div className="sidebar-title">{item.title}</div>
-          </a>
-        );
-      })}
+      <div className="sidebar-scroll">
+        {labels.map((item, i) => {
+          const bg = colors[i % colors.length];
+          const textColor = getLuma(bg) > 0.6 ? "#000" : "#fff";
+          const active = pathname === item.href;
+          return (
+            <Link
+              key={item.title}
+              to={item.href}
+              className={`sidebar-card ${active ? "is-active" : ""}`}
+              style={{ background: bg, color: textColor }}
+            >
+              <div className="sidebar-num">{item.num}</div>
+              <div className="sidebar-title">{item.title}</div>
+            </Link>
+          );
+        })}
+      </div>
     </aside>
   );
 };

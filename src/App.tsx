@@ -1,37 +1,41 @@
 import React, { useState } from "react";
-import LoaderLine from "./components/LoaderLine";
-import TVReveal from "./components/TVReveal";
-import LogoCard from "./components/LogoCard";
-import Sidebar from "./components/Sidebar";
-import BottomNav from "./components/BottomNav";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import LoaderLine from "./components/LoaderLine/LoaderLine.tsx";
+import TVReveal from "./components/TVReveal/TVReveal.tsx";
+import LogoCard from "./components/LogoCard/LogoCard.tsx";
+import Sidebar from "./components/Sidebar/Sidebar.tsx";
+import BottomNav from "./components/BottomNav/BottomNav.tsx";
+import ArtworkPage from "././pages/artwork/ArtworkPage";
+import "./styles.css";
+
+const Home: React.FC<{ done: boolean }> = ({ done }) => (
+  <div className="app-shell" aria-live="polite">
+    <Sidebar />
+    <main>
+      <section className="content-center" id="home">
+        {done && (
+          <TVReveal>
+            <LogoCard />
+          </TVReveal>
+        )}
+      </section>
+    </main>
+  </div>
+);
 
 const App: React.FC = () => {
   const [done, setDone] = useState(false);
 
   return (
-    <>
+    <BrowserRouter>
       {!done && <LoaderLine onDone={() => setDone(true)} />}
-
-      <div className="app-shell" aria-live="polite">
-        {/* Desktop sidebar (hidden on mobile via CSS grid change) */}
-        <Sidebar />
-
-        {/* Main content */}
-        <main>
-          <section className="content-center" id="home">
-            {/* TV style reveal after loader finishes */}
-            {done && (
-              <TVReveal>
-                <LogoCard />
-              </TVReveal>
-            )}
-          </section>
-        </main>
-      </div>
-
-      {/* Mobile sticky, horizontal scroll nav */}
+      <Routes>
+        <Route path="/" element={<Home done={done} />} />
+        <Route path="/artwork" element={<ArtworkPage />} />
+        {/* future: <Route path="/contact" element={<ContactPage />} /> */}
+      </Routes>
       <BottomNav />
-    </>
+    </BrowserRouter>
   );
 };
 
