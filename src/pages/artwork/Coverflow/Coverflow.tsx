@@ -34,7 +34,7 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   const STEP_COOLDOWN_MS = isMobile ? 25 : 160;
 
   const wheelAcc = useRef(0);
-  const WHEEL_THRESHOLD = isMobile ? 40 : 100;
+  const WHEEL_THRESHOLD = isMobile ? 70 : 100;
   const didDrag = useRef(false);
 
   const handleWheel = useCallback(
