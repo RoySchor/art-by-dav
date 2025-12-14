@@ -1,4 +1,3 @@
-/* override sidebar width for this page */
 .artwork-page {
   --sidebar-w: 200px;
 }
@@ -25,5 +24,9 @@
   .artwork-main {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .art-title {
+    padding-top: 20px;
   }
 }

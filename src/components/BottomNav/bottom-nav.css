@@ -9,7 +9,9 @@
 }
 
 @media (max-width: 1300px) {
-  .bottom-nav { display: block; }
+  .bottom-nav {
+    display: block;
+  }
 }
 
 /* horizontal scroller */
@@ -17,7 +19,7 @@
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding: 6px 4px;             /* inner breathing room */
+  padding: 6px 4px; /* inner breathing room */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   width: 100%;
@@ -25,7 +27,7 @@
 
 /* chips styled like sidebar cards, but wider + less tall */
 .bottom-chip {
-  border: none;                 /* no outline */
+  border: none; /* no outline */
   box-shadow: none;
   border-radius: var(--radius);
   text-decoration: none;
@@ -39,9 +41,9 @@
 
   text-shadow:
     -0.6px -0.6px 0 #000,
-     0.6px -0.6px 0 #000,
-    -0.6px  0.6px 0 #000,
-     0.6px  0.6px 0 #000;
+    0.6px -0.6px 0 #000,
+    -0.6px 0.6px 0 #000,
+    0.6px 0.6px 0 #000;
   font-weight: 800;
   font-size: 18px;
   white-space: nowrap;

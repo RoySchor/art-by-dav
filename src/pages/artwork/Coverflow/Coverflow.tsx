@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useLayoutEffect, useState } from "react";
 import type { ArtItem } from "../ArtworkPage";
 import "./coverflow.css";
 
@@ -14,8 +14,26 @@ const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(ma
 const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => {
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
+  // Track container width to adapt spacing on small screens
+  const [width, setWidth] = useState<number>(0);
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver((entries) => setWidth(entries[0].contentRect.width));
+    ro.observe(el);
+    // initialize immediately
+    setWidth(el.getBoundingClientRect().width);
+    return () => ro.disconnect();
+  }, []);
+
+  const isMobile = width > 0 && width < 700;
+  const spacing = isMobile ? 150 : 220; // horizontal distance between covers
+  const angle = isMobile ? 40 : 50; // Y rotation for side items
+  const sideScale = isMobile ? 0.9 : 0.84; // scale for non-center items
+  const depthPerStep = isMobile ? 60 : 80; // Z push for depth
+
   const wheelAcc = useRef(0);
-  const WHEEL_THRESHOLD = 100;
+  const WHEEL_THRESHOLD = isMobile ? 160 : 100; // less sensitive on phones/trackpads
 
   const handleWheel = useCallback(
     (e: WheelEvent) => {
@@ -23,14 +41,13 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
       e.preventDefault();
       const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
       wheelAcc.current += delta;
-
       if (Math.abs(wheelAcc.current) >= WHEEL_THRESHOLD) {
         const dir = wheelAcc.current > 0 ? 1 : -1;
         onIndexChange(clamp(index + dir, 0, items.length - 1));
         wheelAcc.current = 0;
       }
     },
-    [index, items.length, onIndexChange]
+    [index, items.length, onIndexChange, WHEEL_THRESHOLD]
   );
 
   useEffect(() => {
@@ -53,17 +70,18 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   const rendered = useMemo(
     () =>
       items.map((item, i) => {
-        const offset = i - index;
+        const offset = i - index; // negative = left, positive = right
         const abs = Math.abs(offset);
-        const isCenter = i === index;
+        const isCenter = offset === 0;
 
-        const rotate = offset === 0 ? 0 : offset > 0 ? -50 : 50;
-        const x = offset * 220;
-        const z = -abs * 80;
-        const scale = isCenter ? 1 : 0.84;
+        const rotateY = isCenter ? 0 : offset > 0 ? -angle : angle;
+        const x = offset * spacing;
+        const z = -abs * depthPerStep;
+        const scale = isCenter ? 1 : sideScale;
 
+        // We position each item from the TRUE center of the stage
         const style: React.CSSProperties = {
-          transform: `translate3d(${x}px, 0, ${z}px) rotateY(${offset === 0 ? 0 : rotate}deg) scale(${scale})`,
+          transform: `translate3d(calc(-50% + ${x}px), calc(-50% + 0px), ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
           zIndex: 1000 - abs,
         };
 
@@ -75,11 +93,11 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
             onClick={() => (isCenter ? onOpen(i) : onIndexChange(i))}
             aria-label={isCenter ? `Open ${item.title}` : `Focus ${item.title}`}
           >
-            <img src={item.thumb} alt={item.title} loading="lazy" />
+            <img src={item.thumb} alt={item.title} loading="lazy" className="cf-thumb" />
           </button>
         );
       }),
-    [items, index, onIndexChange, onOpen]
+    [items, index, spacing, angle, depthPerStep, sideScale, onIndexChange, onOpen]
   );
 
   return (

@@ -22,21 +22,24 @@ function getLuma(hex: string) {
   const g = parseInt(n.slice(2, 4), 16) / 255;
   const b = parseInt(n.slice(4, 6), 16) / 255;
   const toLin = (c: number) => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
-  const rl = toLin(r), gl = toLin(g), bl = toLin(b);
+  const rl = toLin(r),
+    gl = toLin(g),
+    bl = toLin(b);
   return 0.2126 * rl + 0.7152 * gl + 0.0722 * bl;
 }
 
 const items = [
   { label: "Home", href: "/" },
   { label: "Artwork", href: "/artwork" },
-  { label: "Contact", href: "/" }
+  { label: "Contact", href: "/" },
 ];
 
 const BottomNav: React.FC = () => {
   const { pathname } = useLocation();
 
   const colors = useMemo(
-    () => [0, 140, 260].map((base) => hslToHex((base + (Math.random() * 40 - 20) + 360) % 360, 80, 50)),
+    () =>
+      [0, 140, 260].map((base) => hslToHex((base + (Math.random() * 40 - 20) + 360) % 360, 80, 50)),
     []
   );
 
