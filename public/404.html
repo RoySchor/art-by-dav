@@ -4,11 +4,17 @@
     <meta charset="utf-8" />
     <script>
       (function () {
-        if (!/github\.io$/i.test(location.hostname)) return; // <-- guard
+        if (!/github\.io$/i.test(location.hostname)) return;
+
         var repoBase = "/art-by-dav/";
-        if (location.pathname.startsWith(repoBase)) return;
-        var path = location.pathname + location.search + location.hash;
-        location.replace(repoBase + "?p=" + encodeURIComponent(path));
+        var path = location.pathname;
+
+        if (path === repoBase || path === repoBase + "index.html") return;
+
+        var rel = path.startsWith(repoBase) ? path.slice(repoBase.length - 1) : path; // keep a leading "/"
+        var target = repoBase + "?p=" + encodeURIComponent(rel + location.search + location.hash);
+
+        location.replace(target);
       })();
     </script>
   </head>
