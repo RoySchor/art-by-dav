@@ -14,7 +14,6 @@ const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(ma
 const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => {
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
-  // Track container width to adapt spacing on small screens
   const [width, setWidth] = useState<number>(0);
   useLayoutEffect(() => {
     const el = wrapRef.current;
@@ -31,7 +30,6 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   const sideScale = isMobile ? 0.9 : 0.84;
   const depthPerStep = isMobile ? 60 : 80;
 
-  // --- WHEEL (desktop / trackpad) ---
   const wheelAcc = useRef(0);
   const WHEEL_THRESHOLD = isMobile ? 160 : 100;
 
@@ -53,11 +51,12 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    return () => el.removeEventListener("wheel", handleWheel as any);
+    const onWheel: EventListener = (ev) => handleWheel(ev as unknown as WheelEvent);
+
+    el.addEventListener("wheel", onWheel, { passive: false } as AddEventListenerOptions);
+    return () => el.removeEventListener("wheel", onWheel);
   }, [handleWheel]);
 
-  // --- KEYBOARD ---
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") onIndexChange(clamp(index + 1, 0, items.length - 1));
@@ -91,22 +90,20 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     const dx = e.clientX - drag.current.startX;
     const dy = e.clientY - drag.current.startY;
 
-    // ignore mostly-vertical gestures so page can still scroll vertically when needed
     if (Math.abs(dy) > Math.abs(dx)) return;
 
-    // prevent vertical scrolling if the gesture is horizontal
     e.preventDefault();
 
     const now = performance.now();
     if (Math.abs(dx) >= DRAG_THRESHOLD_PX && now - drag.current.lastStepTime >= STEP_COOLDOWN_MS) {
-      const dir = dx < 0 ? 1 : -1; // dragging left goes to next, right to prev
+      const dir = dx < 0 ? 1 : -1;
       onIndexChange(clamp(index + dir, 0, items.length - 1));
-      drag.current.startX = e.clientX; // reset anchor so you can keep dragging to step again
+      drag.current.startX = e.clientX;
       drag.current.lastStepTime = now;
     }
   };
 
-  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+  const endDrag = () => {
     const el = wrapRef.current;
     if (el && drag.current) el.releasePointerCapture(drag.current.id);
     drag.current = null;

@@ -28,6 +28,13 @@ function getLuma(hex: string) {
   return 0.2126 * rl + 0.7152 * gl + 0.0722 * bl;
 }
 
+function hueFromString(text: string, salt = "dav@1"): number {
+  let h = 0;
+  const str = text + salt;
+  for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+  return ((h % 360) + 360) % 360;
+}
+
 const items = [
   { label: "Home", href: "/" },
   { label: "Artwork", href: "/artwork" },
@@ -39,7 +46,10 @@ const BottomNav: React.FC = () => {
 
   const colors = useMemo(
     () =>
-      [0, 140, 260].map((base) => hslToHex((base + (Math.random() * 40 - 20) + 360) % 360, 80, 50)),
+      items.map((it, i) => {
+        const hue = (hueFromString(it.label) + i * 20) % 360;
+        return hslToHex(hue, 80, 50);
+      }),
     []
   );
 

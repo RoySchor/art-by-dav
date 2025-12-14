@@ -28,6 +28,15 @@ function getLuma(hex: string) {
   return 0.2126 * rl + 0.7152 * gl + 0.0722 * bl;
 }
 
+function hueFromString(text: string, salt = "dav@1"): number {
+  let h = 0;
+  const str = text + salt;
+  for (let i = 0; i < str.length; i++) {
+    h = (h * 31 + str.charCodeAt(i)) | 0;
+  }
+  return ((h % 360) + 360) % 360;
+}
+
 const labels = [
   { num: "00", title: "Home", href: "/" },
   { num: "01", title: "Artwork", href: "/artwork" },
@@ -35,13 +44,15 @@ const labels = [
 ];
 
 const Sidebar: React.FC = () => {
-  const colors = useMemo(() => {
-    return [0, 140, 260].map((base) => {
-      const h = (base + Math.floor(Math.random() * 40) - 20 + 360) % 360;
-      return hslToHex(h, 80, 50);
-    });
-  }, []);
   const { pathname } = useLocation();
+  const colors = useMemo(
+    () =>
+      labels.map((it, i) => {
+        const hue = (hueFromString(it.title) + i * 20) % 360; // slight spread
+        return hslToHex(hue, 80, 50);
+      }),
+    []
+  );
 
   return (
     <aside className="sidebar" aria-label="Primary">
