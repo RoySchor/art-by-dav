@@ -4,7 +4,6 @@
   --text: #111111;
   --accent: #111111;
   --radius: 24px;
-
   --sidebar-w: 280px;
   --gap: 24px;
 }
@@ -20,7 +19,6 @@ body,
 #root {
   height: 100%;
 }
-
 body {
   margin: 0;
   font-family:
@@ -39,7 +37,7 @@ body {
   background: var(--bg);
 }
 
-/* ---- Loader line animation (center → full width) ---- */
+/* keyframes used by components */
 @keyframes lineGrow {
   from {
     transform: scaleX(0);
@@ -48,8 +46,6 @@ body {
     transform: scaleX(1);
   }
 }
-
-/* ---- TV vertical reveal ---- */
 @keyframes tvOpen {
   0% {
     transform: scaleY(0);
@@ -57,7 +53,7 @@ body {
     opacity: 0.8;
   }
   60% {
-    transform: scaleY(1.06); /* slight overshoot */
+    transform: scaleY(1.06);
   }
   80% {
     transform: scaleY(0.98);
@@ -65,121 +61,33 @@ body {
   }
   100% {
     transform: scaleY(1);
-    filter: blur(0);
     opacity: 1;
   }
 }
 
-/* page layout */
+/* Page layout */
 .app-shell {
   min-height: 100%;
   display: grid;
-  grid-template-columns: 1fr; /* keeps space for the fixed sidebar */
+  grid-template-columns: 1fr;
   gap: var(--gap);
   padding: var(--gap);
 }
 
 @media (max-width: 1300px) {
   .app-shell {
-    grid-template-columns: 1fr;
-    padding-bottom: 96px; /* space for bottom nav */
+    padding-bottom: 96px;
   }
 }
 
-/* sidebar “boxed” look */
-.sidebar {
-  position: fixed;
-  left: var(--gap);
-  top: 50%;
-  transform: translateY(-50%);
-  max-height: calc(100svh - 2 * var(--gap));
-  overflow-y: auto;
-  width: var(--sidebar-w);
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding-right: 4px;
-  z-index: 10;
-}
-
-@media (max-width: 1300px) {
-  .sidebar {
-    display: none;
-  }
-}
-
-.sidebar-card {
-  border: none; /* no outline */
-  box-shadow: none; /* no shadow */
-  border-radius: var(--radius);
-  padding: 20px;
-  text-decoration: none;
-  color: #fff; /* default white text; component may override to black if bg is white */
-  display: block;
-}
-
-.sidebar-num {
-  font-size: 18px;
-  opacity: 0.9;
-  margin-bottom: 22px; /* increased spacing */
-}
-
-/* main “Raw Materials” style card */
-.logo-card {
-  background: transparent; /* no background */
-  border-radius: calc(var(--radius) + 8px);
-  border: 1.5px solid #000000; /* thin outline */
-  box-shadow: none; /* no heavy shadow */
-  padding: clamp(24px, 6vw, 48px);
-  width: min(92vw, 1100px);
-  height: min(78vh, 780px); /* takes most of the screen */
-  display: grid;
-  place-items: center;
-}
-
-.logo-card h1 {
-  font-size: clamp(56px, 12vw, 140px); /* really big */
-  line-height: 0.95;
-  margin: 0;
-}
-
-/* bottom sticky nav for phones */
-.bottom-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 12px;
-  padding: 0 12px;
-  display: none;
-}
-
-@media (max-width: 1300px) {
-  .bottom-nav {
-    display: block;
-  }
-}
-
-.bottom-scroll {
-  display: flex;
-  gap: 12px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-}
-
-.bottom-chip {
-  padding: 14px 18px;
-  white-space: nowrap;
-  font-weight: 600;
-}
-
+/* center content and keep room for fixed sidebar on desktop */
 .content-center {
   display: grid;
   place-items: center;
   min-height: calc(100svh - 2 * var(--gap));
-  padding-left: calc(var(--sidebar-w) + var(--gap) + 200px);
+  padding-left: calc(var(--sidebar-w) + var(--gap));
   padding-right: calc(var(--sidebar-w) + var(--gap));
+  overflow-x: hidden;
 }
 
 @media (max-width: 1300px) {

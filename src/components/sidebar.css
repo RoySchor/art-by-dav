@@ -1,0 +1,40 @@
+.sidebar {
+  position: fixed;
+  left: var(--gap);
+  top: 50%;
+  transform: translateY(-50%);
+  width: var(--sidebar-w);
+  max-height: calc(100svh - 2 * var(--gap));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-right: 4px;
+  z-index: 10;
+}
+
+@media (max-width: 1300px) {
+  .sidebar {
+    display: none;
+  }
+}
+
+.sidebar-card {
+  border: none;
+  box-shadow: none;
+  border-radius: var(--radius);
+  padding: 50px 20px;
+  text-decoration: none;
+  display: block;
+}
+
+.sidebar-num {
+  font-size: 18px;
+  opacity: 0.9;
+  margin-bottom: 50px;
+}
+
+.sidebar-title {
+  font-weight: 800;
+  font-size: 28px;
+}

@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import "./sidebar.css";
 
 function hslToHex(h: number, s: number, l: number) {
   s /= 100;
@@ -34,12 +35,9 @@ const labels = [
 
 const Sidebar: React.FC = () => {
   const colors = useMemo(() => {
-    // three distinct-ish hues
     return [0, 140, 260].map((base) => {
       const h = (base + Math.floor(Math.random() * 40) - 20 + 360) % 360;
-      const s = 80;
-      const l = 50;
-      return hslToHex(h, s, l);
+      return hslToHex(h, 80, 50);
     });
   }, []);
 
@@ -47,17 +45,16 @@ const Sidebar: React.FC = () => {
     <aside className="sidebar" aria-label="Primary">
       {labels.map((item, i) => {
         const bg = colors[i % colors.length];
-        const luma = getLuma(bg);
-        const textColor = luma > 0.6 ? "#000" : "#fff"; // if very light, use black
+        const textColor = getLuma(bg) > 0.6 ? "#000" : "#fff";
         return (
           <a
             key={item.title}
-            className="sidebar-card"
             href={item.href}
+            className="sidebar-card"
             style={{ background: bg, color: textColor }}
           >
             <div className="sidebar-num">{item.num}</div>
-            <div style={{ fontWeight: 800, fontSize: 28 }}>{item.title}</div>
+            <div className="sidebar-title">{item.title}</div>
           </a>
         );
       })}

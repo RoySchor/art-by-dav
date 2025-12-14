@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import "./tv-reveal.css";
 
 interface TVRevealProps {
   delayMs?: number;
@@ -12,14 +13,14 @@ const TVReveal: React.FC<TVRevealProps> = ({ delayMs = 50, children }) => {
     const el = ref.current;
     if (!el) return;
     const id = setTimeout(() => {
-      el.style.animation = `tvOpen 650ms cubic-bezier(.2,.9,.2,1) forwards`;
+      el.classList.add("tv-inner--revealed");
     }, delayMs);
     return () => clearTimeout(id);
   }, [delayMs]);
 
   return (
-    <div style={{ overflow: "hidden" }}>
-      <div ref={ref} style={{ transform: "scaleY(0)", transformOrigin: "50% 50%" }}>
+    <div className="tv-wrapper">
+      <div ref={ref} className="tv-inner">
         {children}
       </div>
     </div>

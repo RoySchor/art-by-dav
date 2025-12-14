@@ -1,0 +1,33 @@
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  padding: 0 12px;
+  display: none;
+}
+
+@media (max-width: 1300px) {
+  .bottom-nav {
+    display: block;
+  }
+}
+
+.bottom-scroll {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.bottom-chip {
+  background: var(--card);
+  border: 2px solid #111;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 0 #111;
+  padding: 14px 18px;
+  white-space: nowrap;
+  font-weight: 600;
+}

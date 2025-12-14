@@ -1,0 +1,19 @@
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  z-index: 1000;
+}
+
+.loader-line {
+  width: 100vw;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: center;
+  transform: scaleX(0);
+  animation-name: lineGrow;
+  animation-timing-function: cubic-bezier(0.22, 0.61, 0.36, 1);
+  animation-fill-mode: forwards;
+}

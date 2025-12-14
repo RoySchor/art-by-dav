@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import "./loader-line.css";
 
 interface LoaderLineProps {
   durationMs?: number;
@@ -17,27 +18,8 @@ const LoaderLine: React.FC<LoaderLineProps> = ({ durationMs = 1100, onDone }) =>
   }, [onDone]);
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        display: "grid",
-        placeItems: "center",
-        background: "var(--bg)",
-        zIndex: 1000,
-      }}
-    >
-      <div
-        ref={ref}
-        style={{
-          width: "100vw",
-          height: 2,
-          background: "var(--accent)",
-          transformOrigin: "center",
-          transform: "scaleX(0)",
-          animation: `lineGrow ${durationMs}ms cubic-bezier(.22,.61,.36,1) forwards`,
-        }}
-      />
+    <div className="loader-overlay">
+      <div ref={ref} className="loader-line" style={{ animationDuration: `${durationMs}ms` }} />
     </div>
   );
 };

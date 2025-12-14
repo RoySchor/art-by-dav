@@ -1,4 +1,5 @@
 import React from "react";
+import "./logo-card.css";
 
 const LogoCard: React.FC = () => {
   return (
