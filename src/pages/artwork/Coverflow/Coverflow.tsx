@@ -25,13 +25,17 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   }, []);
 
   const isMobile = width > 0 && width < 700;
+
   const spacing = isMobile ? 150 : 220;
   const angle = isMobile ? 40 : 50;
   const sideScale = isMobile ? 0.9 : 0.84;
   const depthPerStep = isMobile ? 60 : 80;
+  const DRAG_THRESHOLD_PX = isMobile ? 18 : 42;
+  const STEP_COOLDOWN_MS = isMobile ? 100 : 160;
 
   const wheelAcc = useRef(0);
-  const WHEEL_THRESHOLD = isMobile ? 30 : 100;
+  const WHEEL_THRESHOLD = isMobile ? 50 : 100;
+  const didDrag = useRef(false);
 
   const handleWheel = useCallback(
     (e: WheelEvent) => {
@@ -67,16 +71,24 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     return () => window.removeEventListener("keydown", onKey);
   }, [index, items.length, onIndexChange, onOpen]);
 
+  useEffect(() => {
+    const preload = (i: number) => {
+      if (i < 0 || i >= items.length) return;
+      const img = new Image();
+      img.decoding = "async";
+      img.src = items[i].image;
+    };
+    preload(index);
+    preload(index - 1);
+    preload(index + 1);
+  }, [index, items]);
+
   const drag = useRef<{ id: number; startX: number; startY: number; lastStepTime: number } | null>(
     null
   );
-  const DRAG_THRESHOLD_PX = 42;
-  const STEP_COOLDOWN_MS = 160;
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    const el = wrapRef.current;
-    if (!el) return;
-    el.setPointerCapture(e.pointerId);
+    didDrag.current = false;
     drag.current = {
       id: e.pointerId,
       startX: e.clientX,
@@ -100,12 +112,11 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
       onIndexChange(clamp(index + dir, 0, items.length - 1));
       drag.current.startX = e.clientX;
       drag.current.lastStepTime = now;
+      didDrag.current = true;
     }
   };
 
   const endDrag = () => {
-    const el = wrapRef.current;
-    if (el && drag.current) el.releasePointerCapture(drag.current.id);
     drag.current = null;
   };
 
@@ -131,10 +142,28 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
             key={item.id}
             className={`cf-item ${isCenter ? "is-center" : ""}`}
             style={style}
-            onClick={() => (isCenter ? onOpen(i) : onIndexChange(i))}
+            onClick={() => {
+              if (isCenter) onOpen(i);
+              else onIndexChange(i);
+            }}
+            onPointerUp={() => {
+              if (!didDrag.current) {
+                if (isCenter) onOpen(i);
+                else onIndexChange(i);
+              }
+            }}
             aria-label={isCenter ? `Open ${item.title}` : `Focus ${item.title}`}
           >
-            <img src={item.thumb} alt={item.title} loading="lazy" className="cf-thumb" />
+            <img
+              src={item.thumb}
+              srcSet={`${item.thumb} 1x, ${item.thumb.replace("/480/360", "/960/720")} 2x`}
+              sizes="(max-width: 700px) 76vw, 420px"
+              alt={item.title}
+              loading="lazy"
+              decoding="async"
+              fetchPriority={isCenter ? "high" : "low"}
+              className="cf-thumb"
+            />
           </button>
         );
       }),
