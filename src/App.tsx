@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [done, setDone] = useState(false);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       {!done && <LoaderLine onDone={() => setDone(true)} />}
       <Routes>
         <Route path="/" element={<Home done={done} />} />
