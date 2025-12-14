@@ -21,19 +21,19 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     if (!el) return;
     const ro = new ResizeObserver((entries) => setWidth(entries[0].contentRect.width));
     ro.observe(el);
-    // initialize immediately
     setWidth(el.getBoundingClientRect().width);
     return () => ro.disconnect();
   }, []);
 
   const isMobile = width > 0 && width < 700;
-  const spacing = isMobile ? 150 : 220; // horizontal distance between covers
-  const angle = isMobile ? 40 : 50; // Y rotation for side items
-  const sideScale = isMobile ? 0.9 : 0.84; // scale for non-center items
-  const depthPerStep = isMobile ? 60 : 80; // Z push for depth
+  const spacing = isMobile ? 150 : 220;
+  const angle = isMobile ? 40 : 50;
+  const sideScale = isMobile ? 0.9 : 0.84;
+  const depthPerStep = isMobile ? 60 : 80;
 
+  // --- WHEEL (desktop / trackpad) ---
   const wheelAcc = useRef(0);
-  const WHEEL_THRESHOLD = isMobile ? 160 : 100; // less sensitive on phones/trackpads
+  const WHEEL_THRESHOLD = isMobile ? 160 : 100;
 
   const handleWheel = useCallback(
     (e: WheelEvent) => {
@@ -57,6 +57,7 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     return () => el.removeEventListener("wheel", handleWheel as any);
   }, [handleWheel]);
 
+  // --- KEYBOARD ---
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") onIndexChange(clamp(index + 1, 0, items.length - 1));
@@ -67,10 +68,54 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     return () => window.removeEventListener("keydown", onKey);
   }, [index, items.length, onIndexChange, onOpen]);
 
+  const drag = useRef<{ id: number; startX: number; startY: number; lastStepTime: number } | null>(
+    null
+  );
+  const DRAG_THRESHOLD_PX = 42;
+  const STEP_COOLDOWN_MS = 160;
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = wrapRef.current;
+    if (!el) return;
+    el.setPointerCapture(e.pointerId);
+    drag.current = {
+      id: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      lastStepTime: performance.now(),
+    };
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!drag.current) return;
+    const dx = e.clientX - drag.current.startX;
+    const dy = e.clientY - drag.current.startY;
+
+    // ignore mostly-vertical gestures so page can still scroll vertically when needed
+    if (Math.abs(dy) > Math.abs(dx)) return;
+
+    // prevent vertical scrolling if the gesture is horizontal
+    e.preventDefault();
+
+    const now = performance.now();
+    if (Math.abs(dx) >= DRAG_THRESHOLD_PX && now - drag.current.lastStepTime >= STEP_COOLDOWN_MS) {
+      const dir = dx < 0 ? 1 : -1; // dragging left goes to next, right to prev
+      onIndexChange(clamp(index + dir, 0, items.length - 1));
+      drag.current.startX = e.clientX; // reset anchor so you can keep dragging to step again
+      drag.current.lastStepTime = now;
+    }
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    const el = wrapRef.current;
+    if (el && drag.current) el.releasePointerCapture(drag.current.id);
+    drag.current = null;
+  };
+
   const rendered = useMemo(
     () =>
       items.map((item, i) => {
-        const offset = i - index; // negative = left, positive = right
+        const offset = i - index;
         const abs = Math.abs(offset);
         const isCenter = offset === 0;
 
@@ -79,7 +124,6 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
         const z = -abs * depthPerStep;
         const scale = isCenter ? 1 : sideScale;
 
-        // We position each item from the TRUE center of the stage
         const style: React.CSSProperties = {
           transform: `translate3d(calc(-50% + ${x}px), calc(-50% + 0px), ${z}px) rotateY(${rotateY}deg) scale(${scale})`,
           zIndex: 1000 - abs,
@@ -101,7 +145,14 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   );
 
   return (
-    <div className="cf-scene" ref={wrapRef}>
+    <div
+      className="cf-scene"
+      ref={wrapRef}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
       <div className="cf-stage">{rendered}</div>
     </div>
   );

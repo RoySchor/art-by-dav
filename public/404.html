@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <script>
       (function () {
-        if (!/github\.io$/i.test(location.hostname)) return;  // <-- guard
+        if (!/github\.io$/i.test(location.hostname)) return; // <-- guard
         var repoBase = "/art-by-dav/";
         if (location.pathname.startsWith(repoBase)) return;
         var path = location.pathname + location.search + location.hash;

@@ -4,6 +4,9 @@
   padding-top: 15%;
   display: grid;
   place-items: center;
+
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
 }
 
 .cf-stage {
@@ -58,6 +61,7 @@
   }
 
   .cf-thumb {
+    width: 76vw;
     height: auto;
     max-width: 360px;
   }
