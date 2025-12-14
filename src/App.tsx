@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import LoaderLine from "./components/LoaderLine/LoaderLine.tsx";
 import TVReveal from "./components/TVReveal/TVReveal.tsx";
 import LogoCard from "./components/LogoCard/LogoCard.tsx";
@@ -27,7 +27,7 @@ const App: React.FC = () => {
   const [done, setDone] = useState(false);
 
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <HashRouter>
       {!done && <LoaderLine onDone={() => setDone(true)} />}
       <Routes>
         <Route path="/" element={<Home done={done} />} />
@@ -35,7 +35,7 @@ const App: React.FC = () => {
         {/* future: <Route path="/contact" element={<ContactPage />} /> */}
       </Routes>
       <BottomNav />
-    </BrowserRouter>
+    </HashRouter>
   );
 };
 
