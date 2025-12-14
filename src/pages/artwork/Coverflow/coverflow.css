@@ -2,7 +2,7 @@
 .cf-scene {
   perspective: 1200px;
   overflow: hidden;
-  padding: 40px 0;
+  padding-top: 25%;
   display: grid;
   place-items: center;
 }

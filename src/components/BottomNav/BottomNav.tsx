@@ -11,7 +11,7 @@ const BottomNav: React.FC = () => (
       <Link className="bottom-chip" to="/artwork">
         Artwork
       </Link>
-      <Link className="bottom-chip" to="/contact">
+      <Link className="bottom-chip" to="/">
         Contact
       </Link>
     </div>

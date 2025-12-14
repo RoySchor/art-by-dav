@@ -31,7 +31,7 @@ function getLuma(hex: string) {
 const labels = [
   { num: "00", title: "Home", href: "/" },
   { num: "01", title: "Artwork", href: "/artwork" },
-  { num: "02", title: "Contact", href: "/contact" },
+  { num: "02", title: "Contact", href: "/" },
 ];
 
 const Sidebar: React.FC = () => {
@@ -45,24 +45,22 @@ const Sidebar: React.FC = () => {
 
   return (
     <aside className="sidebar" aria-label="Primary">
-      <div className="sidebar-scroll">
-        {labels.map((item, i) => {
-          const bg = colors[i % colors.length];
-          const textColor = getLuma(bg) > 0.6 ? "#000" : "#fff";
-          const active = pathname === item.href;
-          return (
-            <Link
-              key={item.title}
-              to={item.href}
-              className={`sidebar-card ${active ? "is-active" : ""}`}
-              style={{ background: bg, color: textColor }}
-            >
-              <div className="sidebar-num">{item.num}</div>
-              <div className="sidebar-title">{item.title}</div>
-            </Link>
-          );
-        })}
-      </div>
+      {labels.map((item, i) => {
+        const bg = colors[i % colors.length];
+        const textColor = getLuma(bg) > 0.6 ? "#000" : "#fff";
+        const active = pathname === item.href;
+        return (
+          <Link
+            key={item.title}
+            to={item.href}
+            className={`sidebar-card ${active ? "is-active" : ""}`}
+            style={{ background: bg, color: textColor }}
+          >
+            <div className="sidebar-num">{item.num}</div>
+            <div className="sidebar-title">{item.title}</div>
+          </Link>
+        );
+      })}
     </aside>
   );
 };
