@@ -7,14 +7,17 @@
         if (!/github\.io$/i.test(location.hostname)) return;
 
         var repoBase = "/art-by-dav/";
-        var path = location.pathname;
+        var path = location.pathname + location.search + location.hash;
 
-        if (path === repoBase || path === repoBase + "index.html") return;
+        if (location.pathname === repoBase || location.pathname === repoBase + "index.html") return;
 
-        var rel = path.startsWith(repoBase) ? path.slice(repoBase.length - 1) : path; // keep a leading "/"
-        var target = repoBase + "?p=" + encodeURIComponent(rel + location.search + location.hash);
+        var rel = location.pathname.startsWith(repoBase)
+          ? location.pathname.slice(repoBase.length - 1)
+          : location.pathname;
 
-        location.replace(target);
+        location.replace(
+          repoBase + "?p=" + encodeURIComponent(rel + location.search + location.hash)
+        );
       })();
     </script>
   </head>
