@@ -1,7 +1,7 @@
 .cf-scene {
   perspective: 1200px;
   overflow: hidden;
-  padding-top: 25%;
+  padding-top: 15%;
   display: grid;
   place-items: center;
 }
@@ -50,7 +50,7 @@
 
 @media (max-width: 700px) {
   .cf-scene {
-    padding-top: 35%;
+    padding-top: 25%;
   }
 
   .cf-item {
