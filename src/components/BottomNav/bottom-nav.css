@@ -2,32 +2,56 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 12px;
+  bottom: 20px;
   padding: 0 12px;
+  z-index: 60;
   display: none;
 }
 
 @media (max-width: 1300px) {
-  .bottom-nav {
-    display: block;
-  }
+  .bottom-nav { display: block; }
 }
 
+/* horizontal scroller */
 .bottom-scroll {
   display: flex;
   gap: 12px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding: 6px 4px;             /* inner breathing room */
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
+  width: 100%;
 }
 
+/* chips styled like sidebar cards, but wider + less tall */
 .bottom-chip {
-  background: var(--card);
-  border: 2px solid #111;
+  border: none;                 /* no outline */
+  box-shadow: none;
   border-radius: var(--radius);
-  box-shadow: 0 2px 0 #111;
-  padding: 14px 18px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 220px;
+  height: 50px;
+  padding: 0 18px;
+
+  text-shadow:
+    -0.6px -0.6px 0 #000,
+     0.6px -0.6px 0 #000,
+    -0.6px  0.6px 0 #000,
+     0.6px  0.6px 0 #000;
+  font-weight: 800;
+  font-size: 18px;
   white-space: nowrap;
-  font-weight: 600;
+}
+
+.bottom-chip.is-active {
+  outline: 2px solid #111;
+  outline-offset: -2px;
+}
+
+.bottom-chip-label {
+  line-height: 1;
 }

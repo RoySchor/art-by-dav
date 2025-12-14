@@ -76,11 +76,10 @@ body {
 
 @media (max-width: 1300px) {
   .app-shell {
-    padding-bottom: 96px;
+    padding-bottom: 0px;
   }
 }
 
-/* center content and keep room for fixed sidebar on desktop */
 .content-center {
   display: grid;
   place-items: center;
@@ -94,5 +93,6 @@ body {
   .content-center {
     padding-left: 0;
     padding-right: 0;
+    overflow-y: hidden;
   }
 }
