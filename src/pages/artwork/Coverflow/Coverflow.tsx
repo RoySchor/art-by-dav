@@ -30,7 +30,7 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   const angle = 60;
   const sideScale = 0.9;
   const depthPerStep = isMobile ? 60 : 80;
-  const DRAG_THRESHOLD_PX = isMobile ? 10 : 42;
+  const DRAG_THRESHOLD_PX = isMobile ? 8 : 42;
   const STEP_COOLDOWN_MS = isMobile ? 90 : 160;
 
   const wheelAcc = useRef(0);
