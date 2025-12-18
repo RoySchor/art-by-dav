@@ -5,7 +5,7 @@
   display: grid;
   place-items: center;
 
-  touch-action: pan-x;
+  touch-action: pan-y;
   overscroll-behavior-x: contain;
 }
 
