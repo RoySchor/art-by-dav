@@ -1,40 +1,26 @@
 import React, { useState } from "react";
 import { HashRouter, Routes, Route } from "react-router-dom";
-import LoaderLine from "./components/LoaderLine/LoaderLine.tsx";
-import TVReveal from "./components/TVReveal/TVReveal.tsx";
-import LogoCard from "./components/LogoCard/LogoCard.tsx";
-import Sidebar from "./components/Sidebar/Sidebar.tsx";
-import BottomNav from "./components/BottomNav/BottomNav.tsx";
-import ArtworkPage from "././pages/artwork/ArtworkPage";
+import BottomNav from "./components/BottomNav/BottomNav";
+import Intro from "./components/Intro/Intro";
+import ArtworkPage from "./pages/artwork/ArtworkPage";
 import "./styles.css";
 
-const Home: React.FC<{ done: boolean }> = ({ done }) => (
-  <div className="app-shell" aria-live="polite">
-    <Sidebar />
-    <main>
-      <section className="content-center" id="home">
-        {done && (
-          <TVReveal>
-            <LogoCard />
-          </TVReveal>
-        )}
-      </section>
-    </main>
-  </div>
-);
-
 const App: React.FC = () => {
-  const [done, setDone] = useState(false);
+  const [introDone, setIntroDone] = useState(false);
 
   return (
     <HashRouter>
-      {!done && <LoaderLine onDone={() => setDone(true)} />}
-      <Routes>
-        <Route path="/" element={<Home done={done} />} />
-        <Route path="/artwork" element={<ArtworkPage />} />
-        {/* future: <Route path="/contact" element={<ContactPage />} /> */}
-      </Routes>
-      <BottomNav />
+      {!introDone && <Intro onDone={() => setIntroDone(true)} />}
+
+      {introDone && (
+        <>
+          <Routes>
+            {/* Artwork is now the root: /#/ */}
+            <Route path="/" element={<ArtworkPage />} />
+          </Routes>
+          <BottomNav />
+        </>
+      )}
     </HashRouter>
   );
 };

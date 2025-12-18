@@ -37,7 +37,6 @@ function hueFromString(text: string, salt = "dav@1"): number {
 
 const items = [
   { label: "Home", href: "/" },
-  { label: "Artwork", href: "/artwork" },
   { label: "Contact", href: "/" },
 ];
 
@@ -62,7 +61,7 @@ const BottomNav: React.FC = () => {
           const active = pathname === it.href;
           return (
             <Link
-              key={it.href}
+              key={`${it.href}-${it.label}`}
               to={it.href}
               className={`bottom-chip ${active ? "is-active" : ""}`}
               style={{ background: bg, color: textColor }}

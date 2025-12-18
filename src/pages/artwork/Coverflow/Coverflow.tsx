@@ -155,13 +155,10 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
             aria-label={isCenter ? `Open ${item.title}` : `Focus ${item.title}`}
           >
             <img
-              src={item.thumb}
-              srcSet={`${item.thumb} 1x, ${item.thumb.replace("/480/360", "/960/720")} 2x`}
-              sizes="(max-width: 700px) 76vw, 420px"
+              src={item.image}
               alt={item.title}
               loading="lazy"
               decoding="async"
-              fetchPriority={isCenter ? "high" : "low"}
               className="cf-thumb"
             />
           </button>

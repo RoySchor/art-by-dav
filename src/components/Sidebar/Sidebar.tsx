@@ -39,8 +39,7 @@ function hueFromString(text: string, salt = "dav@1"): number {
 
 const labels = [
   { num: "00", title: "Home", href: "/" },
-  { num: "01", title: "Artwork", href: "/artwork" },
-  { num: "02", title: "Contact", href: "/" },
+  { num: "01", title: "Contact", href: "/" },
 ];
 
 const Sidebar: React.FC = () => {
