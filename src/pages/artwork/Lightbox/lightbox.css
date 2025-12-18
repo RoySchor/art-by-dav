@@ -90,3 +90,29 @@
 .lb-next {
   right: 10px;
 }
+
+.lb-close,
+.lb-nav {
+  -webkit-tap-highlight-color: transparent;
+  tap-highlight-color: transparent;
+
+  outline: none;
+  box-shadow: none;
+
+  user-select: none;
+  -webkit-user-select: none;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.lb-close:focus,
+.lb-nav:focus {
+  outline: none;
+}
+
+.lb-close:focus-visible,
+.lb-nav:focus-visible {
+  outline: 2px solid rgba(0, 0, 0, 0.35);
+  outline-offset: 2px;
+}

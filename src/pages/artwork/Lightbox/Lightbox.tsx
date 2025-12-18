@@ -14,16 +14,19 @@ const Lightbox: React.FC<Props> = ({ openIndex, items, onClose, onPrev, onNext }
   const open = openIndex !== null;
   const item = open ? items[openIndex!] : null;
 
+  const hasPrev = open && openIndex! > 0;
+  const hasNext = open && openIndex! < items.length - 1;
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") onPrev();
-      if (e.key === "ArrowRight") onNext();
+      if (e.key === "ArrowLeft" && hasPrev) onPrev();
+      if (e.key === "ArrowRight" && hasNext) onNext();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose, onPrev, onNext]);
+  }, [open, onClose, onPrev, onNext, hasPrev, hasNext]);
 
   if (!open || !item) return null;
 
@@ -33,19 +36,27 @@ const Lightbox: React.FC<Props> = ({ openIndex, items, onClose, onPrev, onNext }
         <div className="lb-media">
           <img src={item.image} alt={item.title} />
         </div>
+
         <aside className="lb-sidebar">
           <div className="lb-title">{item.title}</div>
           <div className="lb-desc">{item.description}</div>
         </aside>
+
         <button className="lb-close" onClick={onClose} aria-label="Close">
           ×
         </button>
-        <button className="lb-nav lb-prev" onClick={onPrev} aria-label="Previous">
-          ‹
-        </button>
-        <button className="lb-nav lb-next" onClick={onNext} aria-label="Next">
-          ›
-        </button>
+
+        {hasPrev && (
+          <button className="lb-nav lb-prev" onClick={onPrev} aria-label="Previous">
+            ‹
+          </button>
+        )}
+
+        {hasNext && (
+          <button className="lb-nav lb-next" onClick={onNext} aria-label="Next">
+            ›
+          </button>
+        )}
       </div>
     </div>
   );
