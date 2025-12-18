@@ -155,12 +155,12 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     }
   };
 
-  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+  const endDrag = (_: React.PointerEvent<HTMLDivElement>) => {
     const el = wrapRef.current;
     const d = drag.current;
     if (el && d) el.releasePointerCapture(d.id);
     drag.current = null;
-  };
+  };  
 
   const rendered = useMemo(
     () =>
