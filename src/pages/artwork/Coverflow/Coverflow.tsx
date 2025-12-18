@@ -14,7 +14,6 @@ const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(ma
 const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => {
   const wrapRef = useRef<HTMLDivElement | null>(null);
 
-  // Track container width to decide "mobile-ish" behavior
   const [width, setWidth] = useState<number>(0);
   useLayoutEffect(() => {
     const el = wrapRef.current;
@@ -27,13 +26,11 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
 
   const isMobile = width > 0 && width < 700;
 
-  // layout/tuning (leave desktop sizing as-is)
   const spacing = isMobile ? 150 : 220;
   const angle = 60;
   const sideScale = 0.9;
   const depthPerStep = isMobile ? 60 : 80;
 
-  // wheel/trackpad sensitivity
   const wheelAcc = useRef(0);
   const WHEEL_THRESHOLD = 110;
 
@@ -75,7 +72,6 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     return () => window.removeEventListener("keydown", onKey);
   }, [index, items.length, onIndexChange, onOpen]);
 
-  // Preload the current & neighbors (helps lightbox feel instant)
   useEffect(() => {
     const preload = (i: number) => {
       if (i < 0 || i >= items.length) return;
@@ -88,11 +84,6 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     preload(index + 1);
   }, [index, items]);
 
-  /**
-   * Mobile drag that feels "native":
-   * - direction-lock (horizontal vs vertical)
-   * - accumulate dx and convert to steps (no cooldown)
-   */
   const drag = useRef<{
     id: number;
     startX: number;
@@ -101,14 +92,11 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     panning: "none" | "h" | "v";
   } | null>(null);
 
-  const STEP_PX = isMobile ? 22 : 48; // pixels per 1 cover step
-  const SLOP_PX = isMobile ? 6 : 10; // ignore tiny jitter
+  const STEP_PX = isMobile ? 22 : 48;
+  const SLOP_PX = isMobile ? 6 : 10;
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     didDrag.current = false;
-
-    // keep receiving move/up even if finger leaves element
-    wrapRef.current?.setPointerCapture(e.pointerId);
 
     drag.current = {
       id: e.pointerId,
@@ -126,26 +114,21 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
     const dx = e.clientX - d.startX;
     const dy = e.clientY - d.startY;
 
-    // decide gesture direction once
     if (d.panning === "none") {
       if (Math.abs(dx) < SLOP_PX && Math.abs(dy) < SLOP_PX) return;
       d.panning = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
     }
 
-    // if user is scrolling vertically, let the page scroll
     if (d.panning === "v") return;
 
-    // horizontal pan: prevent scroll/jank
     e.preventDefault();
 
-    // accumulate horizontal travel
     d.accX += dx;
     d.startX = e.clientX;
 
-    // convert accumulated pixels -> step count (can be multiple)
     let steps = 0;
     while (Math.abs(d.accX) >= STEP_PX) {
-      steps += d.accX > 0 ? -1 : 1; // swipe right => previous, swipe left => next
+      steps += d.accX > 0 ? -1 : 1;
       d.accX += d.accX > 0 ? -STEP_PX : STEP_PX;
     }
 
@@ -156,11 +139,9 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
   };
 
   const endDrag = (_: React.PointerEvent<HTMLDivElement>) => {
-    const el = wrapRef.current;
-    const d = drag.current;
-    if (el && d) el.releasePointerCapture(d.id);
     drag.current = null;
-  };  
+    didDrag.current = false;
+  };
 
   const rendered = useMemo(
     () =>
@@ -179,21 +160,23 @@ const Coverflow: React.FC<Props> = ({ items, index, onIndexChange, onOpen }) => 
           zIndex: 1000 - abs,
         };
 
+        const act = () => {
+          if (isCenter) onOpen(i);
+          else onIndexChange(i);
+        };
+
         return (
           <button
             key={item.id}
+            type="button"
             className={`cf-item ${isCenter ? "is-center" : ""}`}
             style={style}
-            onClick={() => {
-              if (isCenter) onOpen(i);
-              else onIndexChange(i);
-            }}
-            onPointerUp={() => {
-              // treat as tap if user didn't actually drag
-              if (!didDrag.current) {
-                if (isCenter) onOpen(i);
-                else onIndexChange(i);
-              }
+            onClick={act}
+            onPointerUp={(e) => {
+              if (e.pointerType === "mouse") return;
+              const dragged = didDrag.current;
+              didDrag.current = false;
+              if (!dragged) act();
             }}
             aria-label={isCenter ? `Open ${item.title}` : `Focus ${item.title}`}
           >
