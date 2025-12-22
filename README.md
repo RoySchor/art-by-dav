@@ -1,6 +1,6 @@
 # Art by Dav
 
-[![website](https://img.shields.io/website?label=website&url=https%3A%2F%2Froyschor.github.io%2Fart-by-dav%2F)]()
+[![website](https://img.shields.io/website?label=website&url=https%3A%2F%2Froyschor.github.io%2Fart-by-dav%2F)](https://royschor.github.io/art-by-dav/)
 
 A modern virtual art gallery built for my brother's art passion.
 
